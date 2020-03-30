@@ -19,3 +19,36 @@
   font-size: 1.5em;
   font-weight: bold;
 }
+
+.state {
+  fill: none;
+  stroke: #FFFFFF;
+  stroke-width: 0.5px;
+}
+
+.nation {
+  fill: #EBEBEB;
+  stroke: #FFFFFF;
+  stroke-width: 0.5px;
+}
+
+.counties {
+  fill: #CCE6CA;
+  stroke: #FFFFFF;
+  stroke-width: 0.5px;
+}
+
+.gratLines {
+  fill: none;
+  stroke: #B3CCE6;
+  stroke-width: 1px;
+}
+
+.gratBackground {
+  fill: #D9E6F2;
+}
+
+.map {
+  border: medium solid #5A5A5A;
+  border-width: 0.5px;
+}
