@@ -88,27 +88,35 @@ function setMap(){
       // project graticule lines
       .attr("d", path);
 
-      // add us states to map
-      var us = map.append("path")
-        .datum(unitedStates)
-        .attr("class", "nation")
-        .attr("d", path);
+    // add us states to map
+    var us = map.append("path")
+      .datum(unitedStates)
+      .attr("class", "nation")
+      .attr("d", path);
 
     // add caCounties to map
     // select county elements that will be generated
     var cali_Counties = map.selectAll(".counties")
+      // bind counties to each element to be created
       .data(caCounties)
+      // create an element for each datum
       .enter()
+      // append each element to the svg as a path element
       .append("path")
+      // assign class for styling
       .attr("class", function(d){
         return "counties " + d.properties.County_nam;
       })
+      // project counties
       .attr("d", path);
 
-      // add california to map
-      var cali = map.append("path")
-        .datum(caState)
-        .attr("class", "state")
-        .attr("d", path);
+    // add California to map
+    var cali = map.append("path")
+      // bind to the element to be created
+      .datum(caState)
+      // assign class for styling
+      .attr("class", "state")
+      // project California
+      .attr("d", path);
   };
 };
