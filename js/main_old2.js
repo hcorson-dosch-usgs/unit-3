@@ -77,11 +77,8 @@
       // join csv data to geojson enumeration units
       caCounties = joinData(caCounties, csvData);
 
-      // color scale
-      var colorScale = makeColorScale(csvData);
-
       // add enumeration units to the map
-      setEnumerationUnits(caCounties, caState, unitedStates, map, path, colorScale);
+      setEnumerationUnits(caCounties, caState, unitedStates, map, path);
     };
   }; //end of setMap()
 
@@ -146,45 +143,8 @@
     return caCounties;
   };
 
-  // *************************************************** //
-  // function to create color scale generator
-  function makeColorScale(data){
-    var colorClasses = [
-      "#D4B9DA",
-      "#C994C7",
-      "#DF65B0",
-      "#DD1C77",
-      "#980043"
-    ];
-
-    // create color scale generator for natural breaks classification
-    var colorScale = d3.scaleThreshold()
-      .range(colorClasses);
-
-    // build array of all values of the expressed attribute
-    var domainArray = [];
-    for (var i=0; i<data.length; i++){
-      var val = parseFloat(data[i][expressed]);
-      domainArray.push(val);
-    };
-
-    // cluster data using ckmeans clustering algorithm to create natural breaks
-    var clusters = ss.ckmeans(domainArray, 5);
-    // reset domain array to cluster minimums
-    domainArray = clusters.map(function(d){
-      return d3.min(d);
-    });
-    // remove first value from domain array to create class breakpoints
-    domainArray.shift();
-
-    // assign array of last 4 cluster minimums as domain
-    colorScale.domain(domainArray);
-
-    return colorScale;
-  };
-
-  // *************************************************** //
-  function setEnumerationUnits(caCounties, caState, unitedStates, map, path, colorScale){
+    // *************************************************** //
+  function setEnumerationUnits(caCounties, caState, unitedStates, map, path){
     // add us states to map
     var us = map.append("path")
       .datum(unitedStates)
