@@ -33,9 +33,9 @@
 }
 
 .counties {
-  fill: #CCE6CA;
   stroke: #FFFFFF;
   stroke-width: 0.5px;
+  stroke-linecap: round;
 }
 
 .gratLines {

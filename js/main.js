@@ -5,7 +5,7 @@
   // *************************************************** //
   // pseudo-global variables
   // variables for data join
-  var attrArray = ["TotalPop_K", "TotalWU_mgald", "Per_Municipal", "Per_Industrial", "Per_Mining", "Per_Livestock", "Per_Aquaculture", "Per_Irrigation", "Per_Irrig_Crops", "Per_Irrig_Golf", "Per_Thermo"];
+  var attrArray = ["Per_Municipal", "Per_Industrial", "Per_Mining", "Per_Livestock", "Per_Aquaculture", "Per_Irrigation", "Per_Irrig_Crops", "Per_Irrig_Golf", "Per_Thermo", "TotalPop_K", "TotalWU_mgald"];
   // initial attribute
   var expressed = attrArray[0];
 
@@ -170,6 +170,7 @@
 
     // cluster data using ckmeans clustering algorithm to create natural breaks
     var clusters = ss.ckmeans(domainArray, 5);
+    console.log(clusters);
     // reset domain array to cluster minimums
     domainArray = clusters.map(function(d){
       return d3.min(d);
@@ -205,7 +206,16 @@
         return "counties " + d.properties.NAMELSAD;
       })
       // project counties
-      .attr("d", path);
+      .attr("d", path)
+      // add color fill based on colorScale function
+      .style("fill", function(d){
+        var value = d.properties[expressed];
+        if(value){
+          return colorScale(d.properties[expressed]);
+        } else {
+          return "#ccc";
+      }
+    });
 
     // add California to map
     var cali = map.append("path")
