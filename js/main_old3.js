@@ -17,7 +17,7 @@
   function setMap(){
     // MAP, PROJECTION, PATH, and QUEUE BLOCKS
     // map frame dimensions
-    var width = window.innerWidth * 0.5,
+    var width = 960,
         height = 730;
 
     // create new svg container for the map
@@ -82,10 +82,6 @@
 
       // add enumeration units to the map
       setEnumerationUnits(caCounties, caState, unitedStates, map, path, colorScale);
-
-      // Add coordinated visualization to the map
-      setChart(csvData, colorScale);
-
     };
   }; //end of setMap()
 
@@ -154,11 +150,11 @@
   // function to create color scale generator
   function makeColorScale(data){
     var colorClasses = [
-      "#fce4bb",
-      "#fdcc8a",
-      "#fc8d59",
-      "#e34a33",
-      "#b30000"
+      "#D4B9DA",
+      "#C994C7",
+      "#DF65B0",
+      "#DD1C77",
+      "#980043"
     ];
 
     // create color scale generator for natural breaks classification
@@ -229,107 +225,6 @@
       .attr("class", "state")
       // project California
       .attr("d", path);
-  };
-
-  // *************************************************** //
-  function setChart(csvData, colorScale){
-    //chart frame dimensions
-    var chartWidth = window.innerWidth * 0.425,
-        chartHeight = 460;
-
-    // create a second svg element to hold the bar chart
-    var chart = d3.select("body")
-      .append("svg")
-      .attr("width", chartWidth)
-      .attr("height", chartHeight)
-      .attr("y", 270)
-      .attr("class", "chart");
-
-    // create a scale to size bars proportionaly to frame
-    var yScale = d3.scaleLinear()
-      // set range of possible output values
-      .range([0, chartHeight])
-      // define range of input values
-      .domain([0, 100]);
-
-    // set bars for each province
-    var bars = chart.selectAll(".bars") // make an empty selection
-      // bind data to elements
-      .data(csvData)
-      // create each element
-      .enter()
-      // append a rectangle for each element
-      .append("rect")
-      // sort the data from smallest to largest
-      .sort(function(a, b){
-        return a[expressed]-b[expressed]
-      })
-      // assign a class to each element for styling
-      .attr("class", function(d){
-        return "bars " + d.County_name;
-      })
-      // set width based on number of rows in csv
-      // subtract 1 pixel to ensure gap between bars
-      .attr("width", chartWidth / csvData.length - 1)
-      // set x position based on number of rows in csv
-      .attr("x", function(d, i){
-        return i * (chartWidth / csvData.length)
-      })
-      // set height attribute
-      .attr("height", function(d){
-        return yScale(parseFloat(d[expressed]));
-      })
-      // set y position of each bar
-      .attr("y", function(d){
-        return chartHeight - yScale(parseFloat(d[expressed]));
-      })
-      .style("fill", function(d){
-        return colorScale(d[expressed]);
-      });
-
-    // annotate bars with attribute value text
-    var numbers = chart.selectAll(".numbers")
-      // bind the data to the elements
-      .data(csvData)
-      // create each element
-      .enter()
-      // append text for each element
-      .append("text")
-      // sort the attribute data from largest to smallest
-      .sort(function(a, b){
-        return a[expressed]-b[expressed]
-      })
-      // set the class for each element, for styling
-      .attr("class", function(d){
-        return "numbers " + d.County_name;
-      })
-      // set an anchor for the text
-      .attr("text-anchor", "middle")
-      // set the x position of the text
-      .attr("x", function(d, i){
-        var fraction = chartWidth / csvData.length;
-        return i * fraction + (fraction - 1) / 2;
-      })
-      // set the y position of each text element
-      .attr("y", function(d){
-        if (Math.round(parseFloat(d[expressed])) < 3){
-          return chartHeight - yScale(parseFloat(d[expressed])) - 5;
-        } else if (Math.round(parseFloat(d[expressed])) >= 3) {
-          return chartHeight - yScale(parseFloat(d[expressed])) + 10;
-        }
-      })
-      // set contents of text strings
-      .text(function(d){
-        return Math.round(d[expressed]);
-      });
-
-    // Create a text element for the chart title
-    var chartTitle = chart.append("text")
-      .attr("x", 20)
-      .attr("y", 40)
-      .attr("class", "chartTitle")
-      .text("Percent of Variable " + expressed.substr(4,expressed.length) + " in each county");
-
   };
 
 })();

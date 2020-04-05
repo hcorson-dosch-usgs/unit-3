@@ -51,4 +51,25 @@
 .map {
   border: medium solid #5A5A5A;
   border-width: 0.5px;
+  margin: 10px 0 0 20px;
+}
+
+.chart {
+  background-color: rgba(232, 232, 232, 0.2);
+  border: medium solid #5A5A5A;
+  border-width: 0.5px;
+  float: right;
+  margin: 10px 20px 0 0;
+}
+
+.numbers {
+  fill: black;
+  font-family: sans-serif;
+  font-size: 0.5em;
+}
+
+.chartTitle {
+  font-family: sans-serif;
+  font-size: 1.5em;
+  font-weight: bold;
 }
