@@ -55,21 +55,37 @@
 }
 
 .chart {
-  background-color: rgba(232, 232, 232, 0.2);
-  border: medium solid #5A5A5A;
-  border-width: 0.5px;
   float: right;
-  margin: 10px 20px 0 0;
-}
-
-.numbers {
-  fill: black;
-  font-family: sans-serif;
-  font-size: 0.5em;
+  margin: 7px 20px 0 0;
 }
 
 .chartTitle {
   font-family: sans-serif;
   font-size: 1.5em;
   font-weight: bold;
+}
+
+.chartBackground {
+  fill: rgba(232, 232, 232, 0.2)
+}
+
+.chartFrame {
+  fill: none;
+  stroke: #5A5A5A;
+  stroke-width: 0.8px;
+  shape-rendering: crispEdges;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #5A5A5A;
+  stroke-width: 0.8px;
+  shape-rendering: crispEdges;
+}
+
+.axis text {
+  font-family: sans-serif;
+  font-size: 0.9em;
+  fill: #757575;
 }
