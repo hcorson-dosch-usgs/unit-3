@@ -301,7 +301,7 @@
 
     // Create a text element for the chart title
     var chartTitle = chart.append("text")
-      .attr("x", 75)
+      .attr("x", 90)
       .attr("y", 40)
       .attr("class", "chartTitle")
       .text("Percent of " + expressed.substr(4,expressed.length).toLowerCase() + " water use in each county");
@@ -309,7 +309,7 @@
     // Create vertical axis generator
     var yAxis = d3.axisLeft()
       .scale(yScale);
-      // .ticks(chartInnerHeight/40, "%");
+      // .ticks(chartInnerHeight/40, "%"); // attempt to add percent sign to tick mark labels - will fix later
 
     // Place axis
     var axis = chart.append("g")
