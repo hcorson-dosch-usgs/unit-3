@@ -86,9 +86,6 @@
       // Add coordinated visualization to the map
       setChart(csvData, colorScale);
 
-      // create dropdown
-      createDropdown(csvData);
-
     };
   }; //end of setMap()
 
@@ -221,7 +218,7 @@
           return colorScale(d.properties[expressed]);
         } else {
           return "#ccc";
-      };
+      }
     });
 
     // add California to map
@@ -328,65 +325,5 @@
       .attr("transform", translate);
 
   };
-
-  // *************************************************** //
-  // fuction to create a dropdown menu for attribute selection
-  function createDropdown(csvData){
-    // add select element
-    var dropdown = d3.select("body")
-      // append the select element to the body
-      .append("select")
-      // add class for styling
-      .attr("class", "dropdown")
-      // add event listener
-      .on("change", function(){
-        // call listener handler function
-        changeAttribute(this.value, csvData)
-      });
-
-    // add initial option
-    var titleOption = dropdown.append("option")
-      // create a title option element with no value attribute
-      .attr("class", "titleOption")
-      // ensure that users cannot select it
-      .attr("disabled", "true")
-      // add an affordance to let users know they can interact with the dropdown menu
-      .text("Select Attribute");
-
-    // add attribute name options
-    var attrOptions = dropdown.selectAll("attrOptions")
-      // bind data to the elements to be created
-      .data(attrArray)
-      // create an element for each datum
-      .enter()
-      // append to the option
-      .append("option")
-      // set value of attributes
-      .attr("value", function(d){ return d })
-      // set text element
-      .text(function(d){ return d });
-  };
-
-  // *************************************************** //
-  // dropdown change listerner handler
-  function changeAttribute(attribute, csvData){
-    // change the expressed attribute
-    expressed = attribute;
-
-    // recreate the color scale
-    var colorScale = makeColorScale(csvData);
-
-    // recolor enumeration units
-    var cali_Counties = d3.selectAll(".counties")
-      .style("fill", function(d){
-        var value = d.properties[expressed];
-        if(value) {
-          return colorScale(value);
-        } else {
-          return "#ccc";
-        }
-      });
-  };
-
 
 })();
