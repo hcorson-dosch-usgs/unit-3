@@ -9,6 +9,23 @@
   // initial attribute
   var expressed = attrArray[0];
 
+  // chart frame dimensions
+  var chartWidth = window.innerWidth * 0.425,
+      chartHeight = 473,
+      leftPadding = 50,
+      rightPadding = 2,
+      topBottomPadding = 5,
+      chartInnerWidth = chartWidth - leftPadding - rightPadding,
+      chartInnerHeight = chartHeight - topBottomPadding * 2,
+      translate = "translate(" + leftPadding + "," + topBottomPadding + ")";
+
+  // create a scale to size bars proportionaly to frame
+  var yScale = d3.scaleLinear()
+    // set range of possible output values
+    .range([463, 0])
+    // define range of input values
+    .domain([0, 100]);
+
   // begin script when window loads
   window.onload = setMap();
 
@@ -236,16 +253,6 @@
 
   // *************************************************** //
   function setChart(csvData, colorScale){
-    // chart frame dimensions
-    var chartWidth = window.innerWidth * 0.425,
-        chartHeight = 473,
-        leftPadding = 50,
-        rightPadding = 2,
-        topBottomPadding = 5,
-        chartInnerWidth = chartWidth - leftPadding - rightPadding,
-        chartInnerHeight = chartHeight - topBottomPadding * 2,
-        translate = "translate(" + leftPadding + "," + topBottomPadding + ")";
-
     // create a second svg element to hold the bar chart
     var chart = d3.select("body")
       .append("svg")
@@ -260,13 +267,6 @@
       .attr("height", chartInnerHeight)
       .attr("transform", translate);
 
-    // create a scale to size bars proportionaly to frame
-    var yScale = d3.scaleLinear()
-      // set range of possible output values
-      .range([463, 0])
-      // define range of input values
-      .domain([0, 100]);
-
     // set bars for each province
     var bars = chart.selectAll(".bar") // make an empty selection
       // bind data to elements
@@ -277,7 +277,7 @@
       .append("rect")
       // sort the data from smallest to largest
       .sort(function(a, b){
-        return b[expressed]-a[expressed]
+        return b[expressed]-a[expressed];
       })
       // assign a class to each element for styling
       .attr("class", function(d){
@@ -286,28 +286,12 @@
       // set width based on number of rows in csv
       // subtract 1 pixel to ensure gap between bars
       .attr("width", chartInnerWidth / csvData.length - 1)
-      // set x position based on number of rows in csv
-      .attr("x", function(d, i){
-        return i * (chartInnerWidth / csvData.length) + leftPadding;
-      })
-      // set height attribute
-      .attr("height", function(d){
-        return 463 - yScale(parseFloat(d[expressed]));
-      })
-      // set y position of each bar
-      .attr("y", function(d){
-        return yScale(parseFloat(d[expressed])) + topBottomPadding;
-      })
-      .style("fill", function(d){
-        return colorScale(d[expressed]);
-      });
 
     // Create a text element for the chart title
     var chartTitle = chart.append("text")
       .attr("x", 90)
       .attr("y", 40)
-      .attr("class", "chartTitle")
-      .text("Percent of " + expressed.substr(4,expressed.length).toLowerCase() + " water use in each county");
+      .attr("class", "chartTitle");
 
     // Create vertical axis generator
     var yAxis = d3.axisLeft()
@@ -326,6 +310,9 @@
       .attr("width", chartInnerWidth)
       .attr("height", chartInnerHeight)
       .attr("transform", translate);
+
+    // set bar positions, heights, and colors
+    updateChart(bars, csvData.length, colorScale);
 
   };
 
@@ -368,7 +355,7 @@
   };
 
   // *************************************************** //
-  // dropdown change listerner handler
+  // dropdown change listener handler
   function changeAttribute(attribute, csvData){
     // change the expressed attribute
     expressed = attribute;
@@ -377,7 +364,9 @@
     var colorScale = makeColorScale(csvData);
 
     // recolor enumeration units
+    // select all enumeration units
     var cali_Counties = d3.selectAll(".counties")
+      // recolor based on the expressed attribute
       .style("fill", function(d){
         var value = d.properties[expressed];
         if(value) {
@@ -386,7 +375,48 @@
           return "#ccc";
         }
       });
+
+    // re-sort, re-size, and re-color bars
+    // select all the bars
+    var bars = d3.selectAll(".bar")
+      // re-sort the bars
+      .sort(function(a, b){
+        return b[expressed]-a[expressed];
+      });
+
+    // re-set bar positions, heights, and colors
+    updateChart(bars, csvData.length, colorScale);
+
   };
 
+
+  // function to position, size, and color bars in chart
+  function updateChart(bars, n, colorScale) {
+    // set/reset x position based on number of rows in csv
+    bars.attr("x", function(d, i){
+          return i * (chartInnerWidth / n) + leftPadding;
+        })
+        // set/reset height attribute
+        .attr("height", function(d){
+          return 463 - yScale(parseFloat(d[expressed]));
+        })
+        // set/reset y position of each bar
+        .attr("y", function(d){
+          return yScale(parseFloat(d[expressed])) + topBottomPadding;
+        })
+        // color/recolor bars
+        .style("fill", function(d){
+          var value = d[expressed];
+          if(value) {
+            return colorScale(value);
+          } else {
+            return "#ccc";
+          }
+        });
+
+    // set/reset text of chart title
+    var chartTitle = d3.select(".chartTitle")
+      .text("Percent of " + expressed.substr(4,expressed.length).toLowerCase() + " water use in each county");
+  };
 
 })();
