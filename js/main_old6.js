@@ -227,8 +227,6 @@
       .append("path")
       // assign class for styling
       .attr("class", function(d){
-        // return "counties " + d.properties.County_name;
-        // return d.properties.NAMELSAD;
         return "counties " + d.properties.NAMELSAD;
       })
       // project counties
@@ -240,15 +238,8 @@
           return colorScale(d.properties[expressed]);
         } else {
           return "#ccc";
-        };
-      })
-      // add mouseover functionality to highlight
-      // use anonymous function so that can pass properties object
-      // without passing the entire GeoJSON feature
-      .on("mouseover", function(d){
-        // highlight(d.properties.NAMELSAD);
-        highlight(d.properties);
-      });
+      };
+    });
 
     // add California to map
     var cali = map.append("path")
@@ -258,7 +249,6 @@
       .attr("class", "state")
       // project California
       .attr("d", path);
-
   };
 
   // *************************************************** //
@@ -291,22 +281,11 @@
       })
       // assign a class to each element for styling
       .attr("class", function(d){
-        // return "bar " + d.NAMELSAD;
-        // return d.County_name;
         return "bar " + d.County_name;
       })
       // set width based on number of rows in csv
       // subtract 1 pixel to ensure gap between bars
       .attr("width", chartInnerWidth / csvData.length - 1)
-      // add mouseover functionality for highlighting
-      // here, okay to pass the name of the function as a parameter, because
-      // this block uses the csvData, and thus the datum is already equivalent
-      // to the properties object within the GeoJSON feature
-      .on("mouseover", highlight);
-      // .on("mouseover", function(d){
-        // highlight(d.County_name)
-      // });
-
 
     // Create a text element for the chart title
     var chartTitle = chart.append("text")
@@ -387,10 +366,6 @@
     // recolor enumeration units
     // select all enumeration units
     var cali_Counties = d3.selectAll(".counties")
-      // add in transition before any parameters are assigned
-      .transition()
-      // specify a duration (1000 milliseconds = 1 second)
-      .duration(1000)
       // recolor based on the expressed attribute
       .style("fill", function(d){
         var value = d.properties[expressed];
@@ -407,24 +382,14 @@
       // re-sort the bars
       .sort(function(a, b){
         return b[expressed]-a[expressed];
-      })
-      // add transition animation
-      .transition()
-      // add delay so that it appears bars are
-      // consciously rearranging themselves
-      .delay(function(d, i){
-        return i * 20
-      })
-      // give each bar 1/2 second to complete transition
-      .duration(500);
+      });
 
     // re-set bar positions, heights, and colors
-    // note that transition is passed with the bars selection
     updateChart(bars, csvData.length, colorScale);
 
   };
 
-  // *************************************************** //
+
   // function to position, size, and color bars in chart
   function updateChart(bars, n, colorScale) {
     // set/reset x position based on number of rows in csv
@@ -452,20 +417,6 @@
     // set/reset text of chart title
     var chartTitle = d3.select(".chartTitle")
       .text("Percent of " + expressed.substr(4,expressed.length).toLowerCase() + " water use in each county");
-  };
-
-  // *************************************************** //
-  // function to highlight enumeration units and bars
-  // function highlight(class_name){
-  function highlight(props){
-    // change stroke
-    // select all elements with county-specific classes (enumeration units and bars)
-    // var selected = d3.selectAll("." + class_name)
-    // var selected = d3.selectAll("class"==class_name)
-    var selected = d3.selectAll(".bar " + props.County_name)
-    // var selected = d3.selectAll("." + props.NAMELSAD)
-      .style("stroke", "blue")
-      .style("stroke-width", "2");
   };
 
 })();
