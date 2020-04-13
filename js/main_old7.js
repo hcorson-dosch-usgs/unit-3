@@ -5,7 +5,7 @@
   // *************************************************** //
   // pseudo-global variables
   // variables for data join
-  var attrArray = ["Per_Municipal", "Per_Industrial", "Per_Mining", "Per_Livestock", "Per_Aquaculture", "Per_Total Irrigation", "Per_Crop Irrigation", "Per_Golf Course Irrigation", "Per_Thermoelectric"];
+  var attrArray = ["Per_Municipal", "Per_Industrial", "Per_Mining", "Per_Livestock", "Per_Aquaculture", "Per_Irrigation", "Per_Irrig_Crops", "Per_Irrig_Golf", "Per_Thermo"];
   // initial attribute
   var expressed = attrArray[0];
 
@@ -147,7 +147,7 @@
       // define the current region
       var csvRegion = csvData[i];
       // define the csv attribute field to use as the key
-      var csvKey = csvRegion.NAMELSAD;
+      var csvKey = csvRegion.County_name;
 
       // Loop through the geojson regions
       for (var a=0; a<caCounties.length; a++){
@@ -227,7 +227,7 @@
       .append("path")
       // assign class for styling
       .attr("class", function(d){
-        // return "counties " + d.properties.NAMELSAD;
+        // return "counties " + d.properties.County_name;
         // return d.properties.NAMELSAD;
         return "counties " + d.properties.NAMELSAD.replace(/\s+/g,'');
       })
@@ -250,14 +250,13 @@
       // use anonymous function so that can pass properties object
       // without passing the entire GeoJSON feature
       .on("mouseover", function(d){
-        highlight(d.properties);
+        // highlight(d.properties);
+        highlight(d.properties.NAMELSAD.replace(/\s+/g,''));
       })
       // add mouse off functionality to dehighlight
       .on("mouseout", function(d){
-        dehighlight(d.properties);
-      })
-      // add labels on mouse move
-      .on("mousemove", moveLabel);
+        dehighlight(d.properties.NAMELSAD.replace(/\s+/g,''));
+      });
 
     // add style descriptor to each path
     var desc = cali_Counties.append("desc")
@@ -305,12 +304,12 @@
       // assign a class to each element for styling
       .attr("class", function(d){
         // return "bar " + d.NAMELSAD;
-        // return d.NAMELSAD;
-        return "bar " + d.NAMELSAD.replace(/\s+/g, '');
+        // return d.County_name;
+        return "bar " + d.County_name.replace(/\s+/g, '');
       })
       // // add an id
       // .attr("id", function(d){
-      //   return d.NAMELSAD;
+      //   return d.County_name;
       // })
       // set width based on number of rows in csv
       // subtract 1 pixel to ensure gap between bars
@@ -319,14 +318,14 @@
       // here, okay to pass the name of the function as a parameter, because
       // this block uses the csvData, and thus the datum is already equivalent
       // to the properties object within the GeoJSON feature
-      .on("mouseover", highlight)
-      // .on("mouseover", function(d){
-      //   highlight(d.NAMELSAD);
-      // })
+      // .on("mouseover", highlight);
+      .on("mouseover", function(d){
+        highlight(d.County_name.replace(/\s+/g,''));
+      })
       // add mouse off functionality to dehighlight
-      .on("mouseout", dehighlight)
-      // add labels on mouse move
-      .on("mousemove", moveLabel);
+      .on("mouseout", function(d){
+        dehighlight(d.County_name.replace(/\s+/g,''));
+      });
 
     // add style descriptor to each rect
     var desc = bars.append("desc")
@@ -484,19 +483,16 @@
   function highlight(props){
     // change stroke
     // select all elements with county-specific classes (enumeration units and bars)
-    var selected = d3.selectAll("." + props.NAMELSAD.replace(/\s+/g,''))
+    var selected = d3.selectAll("." + props)
     // var selected = d3.selectAll("." + props.NAMELSAD)
       .style("stroke", "blue")
       .style("stroke-width", "2");
-
-    // trigger label
-    setLabel(props);
   };
 
   // *************************************************** //
   function dehighlight(props){
     // select all elements with county-specific classes (enumeration units and bars)
-    var selected = d3.selectAll("." + props.NAMELSAD.replace(/\s+/g,''))
+    var selected = d3.selectAll("." + props)
       // restyle the stroke (i.e. unhighlight)
       .style("stroke", function(){
         // pass current element in DOM to the getStyle function
@@ -523,67 +519,13 @@
       // return the value of the correct style property
       return styleObject[styleName];
     };
-
-    // clear label
-    d3.select(".infolabel")
-      .remove();
   };
 
   // *************************************************** //
   // function to create dynamic label
   function setLabel(props){
     // label content
-    var labelAttribute = "<h1>" + (Math.round(props[expressed]*10) / 10) + "%</h1><b>" + expressed.substr(4,expressed.length).toLowerCase() + " water use</b>";
 
-    // create info label div
-    var infolabel = d3.select("body")
-      // append the div to the body
-      .append("div")
-      // add a class for styling
-      .attr("class", "infolabel")
-      // add a county-specific id
-      .attr("id", props.NAMELSAD + "_label")
-      // feed in the attribute string
-      .html(labelAttribute);
-
-    //
-    var countyName = infolabel.append("div")
-      .attr("class", "labelname")
-      .html(props.NAMELSAD);
-  };
-
-  // *************************************************** //
-  // function to move info label with mouse
-  function moveLabel(){
-    // get width of label
-    // select the label
-    var labelWidth = d3.select(".infolabel")
-      // get its DOM node
-      .node()
-      // return an object the size of the label
-      .getBoundingClientRect()
-      // access its width
-      .width;
-
-    // retrieve coordinates of the mousemove event
-    // adjust to set label above and to the right of the mouse
-    var x1 = d3.event.clientX + 10,
-        y1 = d3.event.clientY - 75;
-        // set backup x coordinate (to shift to left when label approaches right side of page)
-        x2 = d3.event.clientX - labelWidth - 10,
-        // set backup y coordinate (to shift down when label approached top of page)
-        y2 = d3.event.clientY + 25;
-
-    // horizontal label coordinate, testing for overflow
-    var x = d3.event.clientX > window.innerWidth - labelWidth - 20 ? x2: x1;
-
-    // vertical label coordinate, testing for overflow
-    var y = d3.event.clientY < 75 ? y2: y1;
-
-    // use adjusted coordinates to set label coordinates
-    d3.select(".infolabel")
-      .style("left", x + "px")
-      .style("top", y + "px");
-  };
+  }
 
 })();
