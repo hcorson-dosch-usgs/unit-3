@@ -5,24 +5,24 @@
   // *************************************************** //
   // pseudo-global variables
   // variables for data join
-  var attrArray = ["Per_Municipal", "Per_Industrial", "Per_Mining", "Per_Livestock", "Per_Aquaculture", "Per_Irrigation", "Per_Crop Irrigation", "Per_Golf Course Irrigation", "Per_Thermoelectric"];
+  var attrArray = ["Per_Municipal", "Per_Industrial", "Per_Mining", "Per_Livestock", "Per_Aquaculture", "Per_Total Irrigation", "Per_Crop Irrigation", "Per_Golf Course Irrigation", "Per_Thermoelectric"];
   // initial attribute
   var expressed = attrArray[0];
 
   // chart frame dimensions
-  var chartWidth = window.innerWidth * 0.525, // was 0.425
+  var chartWidth = window.innerWidth * 0.425,
       chartHeight = 473,
-      leftPadding = 40,
+      leftPadding = 50,
       rightPadding = 2,
-      topBottomPadding = 35,
+      topBottomPadding = 5,
       chartInnerWidth = chartWidth - leftPadding - rightPadding,
-      chartInnerHeight = chartHeight - topBottomPadding * 2, // was 2
+      chartInnerHeight = chartHeight - topBottomPadding * 2,
       translate = "translate(" + leftPadding + "," + topBottomPadding + ")";
 
   // create a scale to size bars proportionaly to frame
   var yScale = d3.scaleLinear()
     // set range of possible output values
-    .range([403, 0])
+    .range([463, 0])
     // define range of input values
     .domain([0, 100]);
 
@@ -34,8 +34,8 @@
   function setMap(){
     // MAP, PROJECTION, PATH, and QUEUE BLOCKS
     // map frame dimensions
-    var width = window.innerWidth * 0.4, // was 0.5
-        height = 695;
+    var width = window.innerWidth * 0.5,
+        height = 720;
 
     // create new svg container for the map
     var map = d3.select("body")
@@ -46,8 +46,8 @@
 
     // create Albers equal area conic projection centered on california
     var projection = d3.geoAlbers()
-      .center([0, 37.28667])
-      .rotate([119.136, 0, 0])
+      .center([0, 37.24667])
+      .rotate([119.276, 0, 0])
       .parallels([35.66, 38.83])
       .scale(4000)
       .translate([width / 2, height / 2]);
@@ -334,9 +334,8 @@
 
     // Create a text element for the chart title
     var chartTitle = chart.append("text")
-      .attr("x", 427.5)
-      .attr("y", 25)
-      .style("text-anchor", "middle")
+      .attr("x", 90)
+      .attr("y", 40)
       .attr("class", "chartTitle");
 
     // Create vertical axis generator
@@ -384,7 +383,7 @@
       // ensure that users cannot select it
       .attr("disabled", "true")
       // add an affordance to let users know they can interact with the dropdown menu
-      .text("Select Water Use Type");
+      .text("Select Attribute");
 
     // add attribute name options
     var attrOptions = dropdown.selectAll("attrOptions")
@@ -397,7 +396,7 @@
       // set value of attributes
       .attr("value", function(d){ return d })
       // set text element
-      .text(function(d){ return d.substr(4,d.length) });
+      .text(function(d){ return d });
   };
 
   // *************************************************** //
@@ -458,7 +457,7 @@
         })
         // set/reset height attribute
         .attr("height", function(d, i){
-          return 403 - yScale(parseFloat(d[expressed]));
+          return 463 - yScale(parseFloat(d[expressed]));
         })
         // set/reset y position of each bar
         .attr("y", function(d, i){
@@ -476,7 +475,7 @@
 
     // set/reset text of chart title
     var chartTitle = d3.select(".chartTitle")
-      .text("Percent of total water use by county: " + expressed.substr(4,expressed.length)); //.toLowerCase()
+      .text("Percent of " + expressed.substr(4,expressed.length).toLowerCase() + " water use in each county");
   };
 
   // *************************************************** //
@@ -534,9 +533,7 @@
   // function to create dynamic label
   function setLabel(props){
     // label content
-    // var placeName = "In " + props.NAMELSAD + ","
-    var labelAttribute = "<h1>" + (Math.round(props[expressed]*10) / 10) + "%</h1>";
-    // var useType = expressed.substr(4,expressed.length).toLowerCase() + " water use"
+    var labelAttribute = "<h1>" + (Math.round(props[expressed]*10) / 10) + "%</h1><b>" + expressed.substr(4,expressed.length).toLowerCase() + " water use</b>";
 
     // create info label div
     var infolabel = d3.select("body")
@@ -549,14 +546,10 @@
       // feed in the attribute string
       .html(labelAttribute);
 
-    // append percentage
-    var placeName = infolabel.append("div")
-      .attr("class", "placeName")
+    //
+    var countyName = infolabel.append("div")
+      .attr("class", "labelname")
       .html(props.NAMELSAD);
-
-    // var useName = infolabel.append("div")
-    //   .attr("class", "useName")
-    //   .html(useType);
   };
 
   // *************************************************** //
@@ -574,8 +567,8 @@
 
     // retrieve coordinates of the mousemove event
     // adjust to set label above and to the right of the mouse
-    var x1 = d3.event.clientX + 5, // was 10
-        y1 = d3.event.clientY - 48; // was 75
+    var x1 = d3.event.clientX + 10,
+        y1 = d3.event.clientY - 75;
         // set backup x coordinate (to shift to left when label approaches right side of page)
         x2 = d3.event.clientX - labelWidth - 10,
         // set backup y coordinate (to shift down when label approached top of page)

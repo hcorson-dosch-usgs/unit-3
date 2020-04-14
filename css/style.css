@@ -56,7 +56,7 @@
 
 .chart {
   float: right;
-  margin: 7px 20px 0 0;
+  margin: 267px 20px 0 0;
 }
 
 .chartTitle {
@@ -91,9 +91,11 @@
 }
 
 .dropdown {
+  width: 13.2%;
   position: absolute;
+  text-align: left;
   top: 30px;
-  left: 40px;
+  left: 429.5px;
   z-index: 10;
   font-family: sans-serif;
   font-size: 1em;
@@ -103,19 +105,27 @@
   box-shadow: 2px 2px 4px #999;
 }
 
+.titleOption {
+  width: max-content;
+}
+
 option {
   font-weight: normal;
 }
 
 .infolabel {
-  margin: 0 20px 0 0;
+  font-family: sans-serif;
+  font-size: 0.6em;
+  margin: 0 2px 0 0;
   position: absolute;
-  height: 50px;
-  min-width: 100px;
-  color: #fff;
-  background-color: #000;
+  height: 33px;
+  /* min-width: 5px; */
+  color: #999;
+  background-color: #fff;
+  /* opacity: 0.7; */
+  /* fill: rgba(232, 232, 232, 0.2) */
   border: solid thin #fff;
-  padding: 5px 10px;
+  padding: 5px 5px;
   top: -75px;
 }
 
@@ -124,4 +134,8 @@ option {
   padding: 0;
   display: inline-block;
   line-height: 1em;
+}
+
+.placeName {
+  margin: 3px 0 0 0;
 }
