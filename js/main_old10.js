@@ -1,26 +1,18 @@
 // Hayley Corson-Dosch javascript script
-// to do:
-// 1. address how lines draw over axes when highlighted due to raise()?
-// 2. address bars order with highlighting?
-// 3. add page title
-// 4. add metadata with source data and qualification re: commerical, hydroelectric, etc.
-// 5. clean up comments in code
-
-
 
 // Define pseudo-global variables
 (function(){
   // *************************************************** //
   // pseudo-global variables
   // variables for data join
-  var attrArray = ["Per_Municipal", "Per_Industrial", "Per_Mining", "Per_Livestock", "Per_Aquaculture", "Per_Irrigation (total)", "Per_Crop Irrigation", "Per_Golf Course Irrigation", "Per_Thermoelectric"];
+  var attrArray = ["Per_Municipal", "Per_Industrial", "Per_Mining", "Per_Livestock", "Per_Aquaculture", "Per_Irrigation", "Per_Crop Irrigation", "Per_Golf Course Irrigation", "Per_Thermoelectric"];
   // initial attribute
   var expressed = attrArray[0];
 
   // chart frame dimensions
   var chartWidth = window.innerWidth * 0.525, // was 0.425
       chartHeight = 330,
-      leftPadding = 28,
+      leftPadding = 30,
       rightPadding = 2,
       topBottomPadding = 35,
       chartInnerWidth = chartWidth - leftPadding - rightPadding,
@@ -189,7 +181,7 @@
       "#fdcc8a",
       "#fc8d59",
       "#e34a33",
-      "#bd0d0d" // previously "#b30000"
+      "#b30000"
     ];
 
     // create color scale generator for natural breaks classification
@@ -265,7 +257,7 @@
       })
       // add mouse off functionality to dehighlight
       .on("mouseout", function(d){
-        dehighlight(d.properties)
+        dehighlight(d.properties);
       })
       // add labels on mouse move
       .on("mousemove", moveLabel);
@@ -478,11 +470,10 @@
   // function to highlight enumeration units and bars
   // function highlight(class_name){
   function highlight(props){
-    // d3.select(this).raise();
     // change stroke
     // select all elements with county-specific classes (enumeration units and bars)
     var selected = d3.selectAll("." + props.NAMELSAD.replace(/\s+/g,''))
-      .raise()
+    // var selected = d3.selectAll("." + props.NAMELSAD)
       .style("stroke", "black")
       .style("stroke-width", "2");
 
@@ -531,10 +522,6 @@
     // clear PC label
     d3.select(".infolabelPC")
       .remove();
-
-    // reset PC axes
-    d3.select(".axisPC")
-      .raise()
   };
 
   // *************************************************** //

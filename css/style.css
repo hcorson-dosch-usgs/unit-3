@@ -56,12 +56,12 @@
 
 .chart {
   float: right;
-  margin: 267px 20px 0 0;
+  margin: 5px 20px 0 0; // was 390 20 0 0
 }
 
 .chartTitle {
   font-family: sans-serif;
-  font-size: 1.5em;
+  font-size: 0.9em;
   font-weight: bold;
 }
 
@@ -71,7 +71,7 @@
 
 .chartFrame {
   fill: none;
-  stroke: #5A5A5A;
+  /* stroke: #5A5A5A; */
   stroke-width: 0.8px;
   shape-rendering: crispEdges;
 }
@@ -91,22 +91,18 @@
 }
 
 .dropdown {
-  width: 13.2%;
+  width: 12.2%;
   position: absolute;
   text-align: left;
   top: 30px;
-  left: 429.5px;
+  left: 443px;
   z-index: 10;
   font-family: sans-serif;
-  font-size: 1em;
+  font-size: 0.9em;
   font-weight: bold;
   padding: 2px;
   border: 1px solid #999;
   box-shadow: 2px 2px 4px #999;
-}
-
-.titleOption {
-  width: max-content;
 }
 
 option {
@@ -120,9 +116,9 @@ option {
   position: absolute;
   height: 33px;
   /* min-width: 5px; */
-  color: #999;
+  color: #000;
   background-color: #fff;
-  /* opacity: 0.7; */
+  opacity: 0.9;
   /* fill: rgba(232, 232, 232, 0.2) */
   border: solid thin #fff;
   padding: 5px 5px;
@@ -136,6 +132,36 @@ option {
   line-height: 1em;
 }
 
+.infolabelPC {
+  font-family: sans-serif;
+  font-size: 0.6em;
+  /* margin: 0 2px 0 0; */
+  position: absolute;
+  height: 10px;
+  /* min-width: 5px; */
+  color: #000;
+  background-color: #fff;
+  opacity: 0.9;
+  /* fill: rgba(232, 232, 232, 0.2) */
+  border: solid thin #fff;
+  padding: 2px 2px;
+  top: -75px;
+}
+
 .placeName {
   margin: 3px 0 0 0;
+}
+
+.parallelChart {
+  float: right;
+  margin: 350px 20px 0 25px;
+  position: absolute;
+}
+
+.axisPC {
+  opacity: 0.6;
+}
+
+.axisPC:hover {
+  opacity: 1;
 }

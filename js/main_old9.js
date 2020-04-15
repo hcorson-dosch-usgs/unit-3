@@ -1,26 +1,18 @@
 // Hayley Corson-Dosch javascript script
-// to do:
-// 1. address how lines draw over axes when highlighted due to raise()?
-// 2. address bars order with highlighting?
-// 3. add page title
-// 4. add metadata with source data and qualification re: commerical, hydroelectric, etc.
-// 5. clean up comments in code
-
-
 
 // Define pseudo-global variables
 (function(){
   // *************************************************** //
   // pseudo-global variables
   // variables for data join
-  var attrArray = ["Per_Municipal", "Per_Industrial", "Per_Mining", "Per_Livestock", "Per_Aquaculture", "Per_Irrigation (total)", "Per_Crop Irrigation", "Per_Golf Course Irrigation", "Per_Thermoelectric"];
+  var attrArray = ["Per_Municipal", "Per_Industrial", "Per_Mining", "Per_Livestock", "Per_Aquaculture", "Per_Irrigation", "Per_Crop Irrigation", "Per_Golf Course Irrigation", "Per_Thermoelectric"];
   // initial attribute
   var expressed = attrArray[0];
 
   // chart frame dimensions
   var chartWidth = window.innerWidth * 0.525, // was 0.425
-      chartHeight = 330,
-      leftPadding = 28,
+      chartHeight = 473,
+      leftPadding = 40,
       rightPadding = 2,
       topBottomPadding = 35,
       chartInnerWidth = chartWidth - leftPadding - rightPadding,
@@ -30,7 +22,7 @@
   // create a scale to size bars proportionaly to frame
   var yScale = d3.scaleLinear()
     // set range of possible output values
-    .range([260, 0])
+    .range([403, 0])
     // define range of input values
     .domain([0, 100]);
 
@@ -114,9 +106,6 @@
       // create dropdown
       createDropdown(csvData);
 
-      // create parallel coordinates chart
-      createParallelChart(csvData);
-
     };
   }; //end of setMap()
 
@@ -189,7 +178,7 @@
       "#fdcc8a",
       "#fc8d59",
       "#e34a33",
-      "#bd0d0d" // previously "#b30000"
+      "#b30000"
     ];
 
     // create color scale generator for natural breaks classification
@@ -265,7 +254,7 @@
       })
       // add mouse off functionality to dehighlight
       .on("mouseout", function(d){
-        dehighlight(d.properties)
+        dehighlight(d.properties);
       })
       // add labels on mouse move
       .on("mousemove", moveLabel);
@@ -273,6 +262,15 @@
     // add style descriptor to each path
     var desc = cali_Counties.append("desc")
       .text('{"stroke": "#FFFFFF", "stroke-width": "0.5px"}')
+
+    // add California to map
+    var cali = map.append("path")
+      // bind to the element to be created
+      .datum(caState)
+      // assign class for styling
+      .attr("class", "state")
+      // project California
+      .attr("d", path);
 
   };
 
@@ -310,6 +308,10 @@
         // return d.NAMELSAD;
         return "bar " + d.NAMELSAD.replace(/\s+/g, '');
       })
+      // // add an id
+      // .attr("id", function(d){
+      //   return d.NAMELSAD;
+      // })
       // set width based on number of rows in csv
       // subtract 1 pixel to ensure gap between bars
       .attr("width", chartInnerWidth / csvData.length - 1)
@@ -318,6 +320,9 @@
       // this block uses the csvData, and thus the datum is already equivalent
       // to the properties object within the GeoJSON feature
       .on("mouseover", highlight)
+      // .on("mouseover", function(d){
+      //   highlight(d.NAMELSAD);
+      // })
       // add mouse off functionality to dehighlight
       .on("mouseout", dehighlight)
       // add labels on mouse move
@@ -337,7 +342,7 @@
     // Create vertical axis generator
     var yAxis = d3.axisLeft()
       .scale(yScale);
-      // .ticks(chartInnerHeight/40, "%"); // attempt to add percent sign to tick mark labels
+      // .ticks(chartInnerHeight/40, "%"); // attempt to add percent sign to tick mark labels - will fix later
 
     // Place axis
     var axis = chart.append("g")
@@ -453,7 +458,7 @@
         })
         // set/reset height attribute
         .attr("height", function(d, i){
-          return 260 - yScale(parseFloat(d[expressed]));
+          return 403 - yScale(parseFloat(d[expressed]));
         })
         // set/reset y position of each bar
         .attr("y", function(d, i){
@@ -478,19 +483,15 @@
   // function to highlight enumeration units and bars
   // function highlight(class_name){
   function highlight(props){
-    // d3.select(this).raise();
     // change stroke
     // select all elements with county-specific classes (enumeration units and bars)
     var selected = d3.selectAll("." + props.NAMELSAD.replace(/\s+/g,''))
-      .raise()
-      .style("stroke", "black")
+    // var selected = d3.selectAll("." + props.NAMELSAD)
+      .style("stroke", "blue")
       .style("stroke-width", "2");
 
     // trigger label
     setLabel(props);
-
-    // trigger PC label
-    setLabelPC(props);
   };
 
   // *************************************************** //
@@ -527,14 +528,6 @@
     // clear label
     d3.select(".infolabel")
       .remove();
-
-    // clear PC label
-    d3.select(".infolabelPC")
-      .remove();
-
-    // reset PC axes
-    d3.select(".axisPC")
-      .raise()
   };
 
   // *************************************************** //
@@ -584,9 +577,9 @@
     var x1 = d3.event.clientX + 5, // was 10
         y1 = d3.event.clientY - 48; // was 75
         // set backup x coordinate (to shift to left when label approaches right side of page)
-        x2 = d3.event.clientX - labelWidth - 5,
+        x2 = d3.event.clientX - labelWidth - 10,
         // set backup y coordinate (to shift down when label approached top of page)
-        y2 = d3.event.clientY + 48;
+        y2 = d3.event.clientY + 25;
 
     // horizontal label coordinate, testing for overflow
     var x = d3.event.clientX > window.innerWidth - labelWidth - 20 ? x2: x1;
@@ -596,139 +589,6 @@
 
     // use adjusted coordinates to set label coordinates
     d3.select(".infolabel")
-      .style("left", x + "px")
-      .style("top", y + "px");
-  };
-
-  // *************************************************** //
-  function createParallelChart(csvData) {
-    // append the svg object to the body of the page
-    var pChart = d3.select("body")
-      .append("svg")
-        .attr("width", chartWidth + 15)
-        .attr("height", chartHeight)
-        .attr("class", "parallelChart")
-      .append("g")
-        .attr("transform", translate);
-
-    // extract the list of dimensions for the plot
-    dimensions = d3.keys(csvData[0]).filter(function(d) { return d != "NAMELSAD" });
-    console.log(dimensions);
-
-    // for each dimension, build a linear scale and store in a yPC object
-    var yPC = {}
-    for (i in dimensions) {
-      name = dimensions[i]
-      yPC[name] = d3.scaleLinear()
-        .domain( d3.extent(csvData, function(d) { return +d[name]; }))
-        .range([chartInnerHeight, 0])
-    }
-
-    // build the X scale and find the best position for each y axis
-    xPC = d3.scalePoint()
-      .range([0, chartInnerWidth + 15])
-      .padding(0.35)
-      .domain(dimensions);
-
-    // the path function takes a row of the csv as input,
-    // and returns x and y coordinates of the line to draw for this row
-    function path(d) {
-      return d3.line()(dimensions.map(function(p) { return [xPC(p), yPC[p](d[p])]; }));
-    }
-
-    // draw the lines
-    var lines = pChart.selectAll("myPath")
-      .data(csvData)
-      .enter()
-      .append("path")
-        .attr("class", function(d) { return "line " + d.NAMELSAD.replace(/\s+/g,'') })
-        .attr("d", path)
-        .style("fill", "none")
-        .style("stroke", "#c2c2c2")
-        .style("stroke-width", 0.5)
-        // .style("stroke", function(d) { return( colorPC(d.NAMELSAD)) })
-        .style("opacity", 1)
-        // highlight on mouseover
-        .on("mouseover", highlight)
-        // de-hightlight on mouse off
-        .on("mouseout", dehighlight)
-        // add labels on mouse move
-        .on("mousemove", moveLabelPC);
-
-    // add style descriptor to each path
-    var desc = lines.append("desc")
-      .text('{"stroke": "#c2c2c2", "stroke-width": "0.5px"}')
-
-    // draw the axes
-    pChart.selectAll("myAxis")
-      // for each dimension of the dataset add a 'g' element:
-      .data(dimensions).enter()
-      .append("g")
-      .attr("class", "axisPC")
-      // translate this element to its right position on the x axis
-      .attr("transform", function(d) { return "translate(" + xPC(d) + ")"; })
-      // build the axis with the call function
-      .each(function(d) { d3.select(this).call(d3.axisLeft().scale(yPC[d])); })
-      // Add axis title
-      .append("text")
-        .style("text-anchor", "middle")
-        .attr("y", -9)
-        .text(function(d) { return d.substr(4,d.length); })
-        .style("fill", "black");
-
-  };
-
-  // *************************************************** //
-  // function to create dynamic label
-  function setLabelPC(props){
-    // label content
-    // var placeName = "In " + props.NAMELSAD + ","
-    var labelAttribute = "<h1>" + (Math.round(props[expressed]*10) / 10) + "%</h1>";
-    // var useType = expressed.substr(4,expressed.length).toLowerCase() + " water use"
-
-    // create info label div
-    var infolabelPC = d3.select("body")
-      // append the div to the body
-      .append("div")
-      // add a class for styling
-      .attr("class", "infolabelPC")
-      // add a county-specific id
-      .attr("id", props.NAMELSAD + "_label")
-      // feed in the attribute string
-      .html(props.NAMELSAD);
-
-  };
-
-  // *************************************************** //
-  // function to move info label with mouse
-  function moveLabelPC(){
-    // get width of label
-    // select the label
-    var labelWidth = d3.select(".infolabelPC")
-      // get its DOM node
-      .node()
-      // return an object the size of the label
-      .getBoundingClientRect()
-      // access its width
-      .width;
-
-    // retrieve coordinates of the mousemove event
-    // adjust to set label above and to the right of the mouse
-    var x1 = d3.event.clientX + 3, // was 10
-        y1 = d3.event.clientY - 18; // was 75
-        // set backup x coordinate (to shift to left when label approaches right side of page)
-        x2 = d3.event.clientX - labelWidth - 3,
-        // set backup y coordinate (to shift down when label approached top of page)
-        y2 = d3.event.clientY + 18;
-
-    // horizontal label coordinate, testing for overflow
-    var x = d3.event.clientX > window.innerWidth - labelWidth - 20 ? x2: x1;
-
-    // vertical label coordinate, testing for overflow
-    var y = d3.event.clientY < 75 ? y2: y1;
-
-    // use adjusted coordinates to set label coordinates
-    d3.select(".infolabelPC")
       .style("left", x + "px")
       .style("top", y + "px");
   };
