@@ -5,7 +5,7 @@
 .axis line {
   fill: none;
   stroke: black;
-  strok-width: 1px;
+  stroke-width: 1px;
   shape-rendering: crispEdges;
 }
 
@@ -20,7 +20,7 @@
   font-weight: bold;
 }
 
-.state {
+/* .state {
   fill: none;
   stroke: #FFFFFF;
   stroke-width: 0.5px;
@@ -30,7 +30,7 @@
   fill: #EBEBEB;
   stroke: #FFFFFF;
   stroke-width: 0.5px;
-}
+} */
 
 .counties {
   stroke: #FFFFFF;
@@ -38,7 +38,7 @@
   stroke-linecap: round;
 }
 
-.gratLines {
+/* .gratLines {
   fill: none;
   stroke: #B3CCE6;
   stroke-width: 1px;
@@ -46,27 +46,29 @@
 
 .gratBackground {
   fill: #D9E6F2;
-}
+} */
 
 .map {
-  border: medium solid #5A5A5A;
-  border-width: 0.5px;
+  /* border: medium solid #5A5A5A;
+  border-width: 0.5px; */
   margin: 10px 0 0 20px;
+  fill: none;
 }
 
 .chart {
   float: right;
-  margin: 5px 20px 0 0; // was 390 20 0 0
+  margin: 15px 25px 0 0; // was 390 20 0 0
 }
 
 .chartTitle {
   font-family: sans-serif;
   font-size: 0.9em;
+  fill: #525252;
   font-weight: bold;
 }
 
 .chartBackground {
-  fill: rgba(232, 232, 232, 0.2)
+  fill: none /* rgba(232, 232, 232, 0.2) */
 }
 
 .chartFrame {
@@ -94,15 +96,16 @@
   width: 12.2%;
   position: absolute;
   text-align: left;
-  top: 30px;
-  left: 443px;
+  top: 80px; /* was 70 with map border*/
+  left: 400px; /* was 420 with map border*/
   z-index: 10;
   font-family: sans-serif;
   font-size: 0.9em;
   font-weight: bold;
+  color: #bd0d0d;
   padding: 2px;
   border: 1px solid #999;
-  box-shadow: 2px 2px 4px #999;
+  box-shadow: 1px 1px 4px #b3b3b3; /* 2px 2px 4px #999 */
 }
 
 option {
@@ -154,7 +157,7 @@ option {
 
 .parallelChart {
   float: right;
-  margin: 350px 20px 0 25px;
+  margin: 330px 20px 0 25px;
   position: absolute;
 }
 
@@ -164,4 +167,46 @@ option {
 
 .axisPC:hover {
   opacity: 1;
+}
+
+.pageHeading {
+  font-family: sans-serif;
+  font-size: 2em;
+  text-align: center;
+  margin: 5px 0 3px 0;
+}
+
+.metadata {
+  float: right;
+  margin: 650px 20px 0 25px;
+  border: medium solid #5A5A5A;
+  border-width: 0.5px;
+  position: absolute;
+}
+
+.metadataText {
+  /* position: absolute;
+  margin: 650px 20px 0 25px; */
+  font-family: sans-serif;
+  font-size: 0.5em;
+  color: #999
+  fill: #525252;
+}
+
+#Sources {
+  position: absolute;
+  /* float: right; */
+  left: 630px;
+  top: 660px;
+  height: 30px;
+  font-family: Arial;
+  text-align: left;
+  line-height: 11px;
+  font-size: 9px;
+}
+
+h6 {
+  font-family: Arial;
+  color: #666666;
+  text-align: left;
 }

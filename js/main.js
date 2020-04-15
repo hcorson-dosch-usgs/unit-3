@@ -1,12 +1,4 @@
 // Hayley Corson-Dosch javascript script
-// to do:
-// 1. address how lines draw over axes when highlighted due to raise()?
-// 2. address bars order with highlighting?
-// 3. add page title
-// 4. add metadata with source data and qualification re: commerical, hydroelectric, etc.
-// 5. clean up comments in code
-
-
 
 // Define pseudo-global variables
 (function(){
@@ -18,8 +10,8 @@
   var expressed = attrArray[0];
 
   // chart frame dimensions
-  var chartWidth = window.innerWidth * 0.525, // was 0.425
-      chartHeight = 330,
+  var chartWidth = window.innerWidth * 0.54, // was 0.425 then 0.525
+      chartHeight = 340,
       leftPadding = 28,
       rightPadding = 2,
       topBottomPadding = 35,
@@ -30,7 +22,7 @@
   // create a scale to size bars proportionaly to frame
   var yScale = d3.scaleLinear()
     // set range of possible output values
-    .range([260, 0])
+    .range([270, 0])
     // define range of input values
     .domain([0, 100]);
 
@@ -42,8 +34,8 @@
   function setMap(){
     // MAP, PROJECTION, PATH, and QUEUE BLOCKS
     // map frame dimensions
-    var width = window.innerWidth * 0.4, // was 0.5
-        height = 695;
+    var width = window.innerWidth * 0.385, // was 0.5
+        height = 680;
 
     // create new svg container for the map
     var map = d3.select("body")
@@ -54,8 +46,8 @@
 
     // create Albers equal area conic projection centered on california
     var projection = d3.geoAlbers()
-      .center([0, 37.28667])
-      .rotate([119.136, 0, 0])
+      .center([0, 37.31667])
+      .rotate([119.09, 0, 0])
       .parallels([35.66, 38.83])
       .scale(4000)
       .translate([width / 2, height / 2]);
@@ -116,6 +108,9 @@
 
       // create parallel coordinates chart
       createParallelChart(csvData);
+
+      // add in metadata
+      addMetadata()
 
     };
   }; //end of setMap()
@@ -242,10 +237,6 @@
         // return d.properties.NAMELSAD;
         return "counties " + d.properties.NAMELSAD.replace(/\s+/g,'');
       })
-      // // add id
-      // .attr("id", function(d){
-      //   return d.properties.NAMELSAD
-      // })
       // project counties
       .attr("d", path)
       // add color fill based on colorScale function
@@ -330,7 +321,7 @@
     // Create a text element for the chart title
     var chartTitle = chart.append("text")
       .attr("x", 427.5)
-      .attr("y", 25)
+      .attr("y", 30)
       .style("text-anchor", "middle")
       .attr("class", "chartTitle");
 
@@ -453,7 +444,7 @@
         })
         // set/reset height attribute
         .attr("height", function(d, i){
-          return 260 - yScale(parseFloat(d[expressed]));
+          return 270 - yScale(parseFloat(d[expressed]));
         })
         // set/reset y position of each bar
         .attr("y", function(d, i){
@@ -478,11 +469,12 @@
   // function to highlight enumeration units and bars
   // function highlight(class_name){
   function highlight(props){
-    // d3.select(this).raise();
     // change stroke
     // select all elements with county-specific classes (enumeration units and bars)
     var selected = d3.selectAll("." + props.NAMELSAD.replace(/\s+/g,''))
+      // bring selected element to front
       .raise()
+      // change stroke and stroke-width
       .style("stroke", "black")
       .style("stroke-width", "2");
 
@@ -532,7 +524,7 @@
     d3.select(".infolabelPC")
       .remove();
 
-    // reset PC axes
+    // bring PC axes back to front
     d3.select(".axisPC")
       .raise()
   };
@@ -541,9 +533,7 @@
   // function to create dynamic label
   function setLabel(props){
     // label content
-    // var placeName = "In " + props.NAMELSAD + ","
     var labelAttribute = "<h1>" + (Math.round(props[expressed]*10) / 10) + "%</h1>";
-    // var useType = expressed.substr(4,expressed.length).toLowerCase() + " water use"
 
     // create info label div
     var infolabel = d3.select("body")
@@ -561,9 +551,6 @@
       .attr("class", "placeName")
       .html(props.NAMELSAD);
 
-    // var useName = infolabel.append("div")
-    //   .attr("class", "useName")
-    //   .html(useType);
   };
 
   // *************************************************** //
@@ -613,6 +600,7 @@
 
     // extract the list of dimensions for the plot
     dimensions = d3.keys(csvData[0]).filter(function(d) { return d != "NAMELSAD" });
+    // check dimensions
     console.log(dimensions);
 
     // for each dimension, build a linear scale and store in a yPC object
@@ -641,12 +629,12 @@
       .data(csvData)
       .enter()
       .append("path")
+        // assign class based on county name associated with element data
         .attr("class", function(d) { return "line " + d.NAMELSAD.replace(/\s+/g,'') })
         .attr("d", path)
         .style("fill", "none")
         .style("stroke", "#c2c2c2")
         .style("stroke-width", 0.5)
-        // .style("stroke", function(d) { return( colorPC(d.NAMELSAD)) })
         .style("opacity", 1)
         // highlight on mouseover
         .on("mouseover", highlight)
@@ -655,7 +643,7 @@
         // add labels on mouse move
         .on("mousemove", moveLabelPC);
 
-    // add style descriptor to each path
+    // add style descriptor to each path (for dehighlighting)
     var desc = lines.append("desc")
       .text('{"stroke": "#c2c2c2", "stroke-width": "0.5px"}')
 
@@ -682,9 +670,7 @@
   // function to create dynamic label
   function setLabelPC(props){
     // label content
-    // var placeName = "In " + props.NAMELSAD + ","
     var labelAttribute = "<h1>" + (Math.round(props[expressed]*10) / 10) + "%</h1>";
-    // var useType = expressed.substr(4,expressed.length).toLowerCase() + " water use"
 
     // create info label div
     var infolabelPC = d3.select("body")
@@ -732,5 +718,29 @@
       .style("left", x + "px")
       .style("top", y + "px");
   };
+
+  // *************************************************** //
+  function addMetadata(){
+    // write text
+    // Add sources
+    var sources_text = '<h6 id = "Sources">'
+    sources_text += '<br><br><b>Data source:</b>'
+    sources_text += '<br>USGS: <a target="_blank" href = "https://waterdata.usgs.gov/ca/nwis/water_use/">Water Use Data for California</a>'
+    sources_text += '<br><i>Note: Percentages for each county were calculated from the total water use for each county. Data were not available for the following uses: commercial, hydroelectric power, and wastewater treatment.</i></a>'
+    sources_text += '</h6>'
+
+    // append div with metadata
+    var dataSpace = d3.select("body")
+      .append("div")
+      .attr("x", 30)
+      .attr("height", 30)
+      .attr("width", chartWidth + 15)
+      .attr("height", 30)
+      .attr("class", "metadataBox")
+      .append("html")
+        .html(sources_text);
+
+  };
+
 
 })();
